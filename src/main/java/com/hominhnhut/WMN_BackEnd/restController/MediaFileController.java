@@ -29,6 +29,4 @@ public class MediaFileController {
         MediaFile mediaFile = mediaFileService.uploadFileToProfile(file,profileID);
         return ResponseEntity.ok(mediaFile);
     }
-
-
 }
