@@ -1,9 +1,11 @@
 package com.hominhnhut.WMN_BackEnd.domain.enity;
 
+import com.hominhnhut.WMN_BackEnd.domain.enity.Product;
+import com.hominhnhut.WMN_BackEnd.domain.enity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Getter
@@ -18,15 +20,19 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String cartId;
 
-    private LocalDateTime localDateTime;
+    private LocalDate localDate;
 
     private boolean status;
 
     @ManyToOne
-            @JoinColumn(name = "userId")
-    User customer;
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @OneToMany
-    @JoinColumn(name = "productId")
-    Set<Product> products;
+    @ManyToMany
+    @JoinTable(
+            name = "cart_product",
+            joinColumns = @JoinColumn(name = "cart_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private Set<Product> products;
 }

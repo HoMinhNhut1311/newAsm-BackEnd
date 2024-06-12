@@ -3,6 +3,8 @@ package com.hominhnhut.WMN_BackEnd.domain.enity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -27,5 +29,6 @@ public class Product {
     @OneToOne
     private Category category;
 
-
+    @ManyToMany(mappedBy = "products")
+    private Set<Cart> carts;
 }
