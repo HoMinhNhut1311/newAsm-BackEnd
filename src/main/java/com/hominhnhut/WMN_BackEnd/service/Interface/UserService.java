@@ -22,4 +22,6 @@ public interface UserService {
     Set<UserDtoResponse> getUserByRoleId(Integer roleId);
 
     Set<UserDtoResponse> getUserByUsernameContaining(String usernameContain);
+
+    UserDtoResponse getUserByUsername(String username);
 }

@@ -18,6 +18,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -37,9 +40,17 @@ public class UserServiceImpl implements UserService {
 
     MyMapperInterFace<UserDtoRequest, User, UserDtoResponse> userMapper;
 
-
+    @PostAuthorize("hasRole('ADMIN')")
     public List<UserDtoResponse> getAll() {
         log.info("In method Get All");
+        var securityContext = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Username : "+securityContext.getName());
+        securityContext.getAuthorities().forEach((grand) -> {
+            log.info(grand.getAuthority());
+        });
+        securityContext.getAuthorities().forEach((grand) -> {
+
+        });
         return this.userRepository.findAll().stream()
               .map(this.userMapper::mapToResponese).
               collect(Collectors.toList());
@@ -124,6 +135,13 @@ public class UserServiceImpl implements UserService {
         );
     }
 
+    @Override
+    public UserDtoResponse getUserByUsername(String username) {
+        userRepository.findUSerByUsername(username).orElseThrow(
+                () -> new AppException(errorType.userNameNotExist)
+        );
+        return null;
+    }
 
 
 }

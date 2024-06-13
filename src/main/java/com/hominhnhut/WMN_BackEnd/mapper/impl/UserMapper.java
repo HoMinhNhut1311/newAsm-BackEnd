@@ -11,6 +11,7 @@ import lombok.experimental.FieldDefaults;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.Provider;
 import org.modelmapper.TypeMap;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.HashSet;
@@ -23,11 +24,13 @@ public class UserMapper implements
         MyMapperInterFace<UserDtoRequest,User, UserDtoResponse> {
 
     ModelMapper modelMapper;
+    PasswordEncoder passwordEncoder;
 
 
     @Override
     public User mapFromRequest(UserDtoRequest R) {
         User user = modelMapper.map(R,User.class);
+        user.setPassword(passwordEncoder.encode(R.getPassword()));
         return user;
     }
 

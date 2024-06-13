@@ -12,6 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,15 +38,7 @@ public class UserController {
     @GetMapping("/")
     public ResponseEntity<
          List<UserDtoResponse>> getAllUser() {
-
-//        var securityContext = SecurityContextHolder.getContext().getAuthentication();
-//        System.out.println("Username : "+securityContext.getName());
-//        securityContext.getAuthorities().forEach((grand) -> {
-//            log.info(grand.getAuthority());
-//        });
-//        securityContext.getAuthorities().forEach((grand) -> {
-//
-//        });
+        log.info("hello");
         List<UserDtoResponse> userDtoResponses = this.userService.getAll();
         return ResponseEntity.ok(userDtoResponses);
     }

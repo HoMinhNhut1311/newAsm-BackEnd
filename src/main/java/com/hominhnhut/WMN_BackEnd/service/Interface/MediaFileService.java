@@ -8,7 +8,7 @@ public interface MediaFileService {
 
     MediaFile uploadFileToProfile(MultipartFile file, String profileId);
 
-
+    MediaFile uploadFileToProduct(MultipartFile file, String productId);
 
 }
 

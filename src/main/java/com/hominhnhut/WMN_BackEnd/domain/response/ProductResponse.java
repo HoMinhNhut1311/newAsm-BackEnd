@@ -14,6 +14,7 @@ public class ProductResponse {
     private double productPrice;
     private String productDes;
     private String categoryName;
+    private String mediaFilePath;
 
 
 }

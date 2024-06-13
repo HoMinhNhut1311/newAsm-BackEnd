@@ -3,6 +3,7 @@ package com.hominhnhut.WMN_BackEnd.domain.enity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -26,9 +27,12 @@ public class Product {
     @OneToOne
     private MediaFile image;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "categorId")
     private Category category;
 
+
     @ManyToMany(mappedBy = "products")
-    private Set<Cart> carts;
+    private Set<Cart> carts = new HashSet<>();
+
 }

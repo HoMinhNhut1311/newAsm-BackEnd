@@ -1,11 +1,11 @@
 package com.hominhnhut.WMN_BackEnd.domain.enity;
 
-import com.hominhnhut.WMN_BackEnd.domain.enity.Product;
-import com.hominhnhut.WMN_BackEnd.domain.enity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -25,14 +25,14 @@ public class Cart {
     private boolean status;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "userId")
+    User user;
 
     @ManyToMany
     @JoinTable(
             name = "cart_product",
-            joinColumns = @JoinColumn(name = "cart_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
+            joinColumns = @JoinColumn(name = "cartId"),
+            inverseJoinColumns = @JoinColumn(name = "productId")
     )
-    private Set<Product> products;
+    private Set<Product> products = new HashSet<>();
 }

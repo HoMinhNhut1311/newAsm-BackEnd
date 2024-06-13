@@ -21,7 +21,8 @@ public enum errorType {
     CourseIdNotExist(1006, "Course Id không tồn tại",HttpStatus.BAD_REQUEST),
     userNameNotExist(1007, "Username không tồn tại", HttpStatus.UNAUTHORIZED),
     PasswordIsNotCorrect(1008, "Mật khẩu không chính xác",HttpStatus.UNAUTHORIZED),
-    IsNotMyToken(1009, "Token không phải của chúng tôi",HttpStatus.BAD_REQUEST)
+    IsNotMyToken(1009, "Token không phải của chúng tôi",HttpStatus.BAD_REQUEST),
+    ProductIdNotFound(1010, "Product Id khong ton tai",HttpStatus.BAD_REQUEST)
 
 
     ;
