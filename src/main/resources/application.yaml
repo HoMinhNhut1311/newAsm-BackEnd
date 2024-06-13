@@ -42,3 +42,5 @@ server:
   servlet:
     context-path: /mnw
 
+asm :
+  key : c29tZSByYW5kb20gc3RyaW5nIGVuY29kZWQgaW4gQmFzZTY0

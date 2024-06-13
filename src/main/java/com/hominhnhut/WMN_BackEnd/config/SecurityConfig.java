@@ -37,9 +37,9 @@ public class SecurityConfig {
 
         // Permit All
         httpSecurity.authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST,PUBLIC_POST_URL).permitAll()
-               .requestMatchers("/***").hasRole("ADMIN")
-                        .anyRequest().authenticated());
+//                request.requestMatchers(HttpMethod.POST,PUBLIC_POST_URL).permitAll()
+               request.anyRequest().permitAll()
+                        );
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(
                         jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())

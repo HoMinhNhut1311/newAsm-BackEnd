@@ -26,7 +26,7 @@ public class Cart {
 
     @ManyToOne
     @JoinColumn(name = "userId")
-    User user;
+    private User user;
 
     @ManyToMany
     @JoinTable(

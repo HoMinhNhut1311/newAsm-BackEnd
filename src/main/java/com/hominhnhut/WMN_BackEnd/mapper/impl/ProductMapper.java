@@ -4,6 +4,8 @@ import com.hominhnhut.WMN_BackEnd.domain.enity.MediaFile;
 import com.hominhnhut.WMN_BackEnd.domain.enity.Product;
 import com.hominhnhut.WMN_BackEnd.domain.request.ProductRequest;
 import com.hominhnhut.WMN_BackEnd.domain.response.ProductResponse;
+import com.hominhnhut.WMN_BackEnd.exception.errorType;
+import com.hominhnhut.WMN_BackEnd.exception.myException.AppException;
 import com.hominhnhut.WMN_BackEnd.mapper.MyMapperInterFace;
 import com.hominhnhut.WMN_BackEnd.repository.MediaFileRepository;
 import lombok.AccessLevel;
@@ -13,7 +15,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-@FieldDefaults(makeFinal = true,level = AccessLevel.PRIVATE)
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class ProductMapper implements
         MyMapperInterFace<ProductRequest, Product, ProductResponse> {
@@ -29,7 +31,9 @@ public class ProductMapper implements
     @Override
     public ProductResponse mapToResponese(Product product) {
         ProductResponse response = modelMapper.map(product, ProductResponse.class);
-        response.setMediaFilePath(product.getImage().getMediaFilePath());
+        if (product.getImage() != null) {
+            response.setMediaFilePath(product.getImage().getMediaFilePath());
+        }
         return response;
     }
 

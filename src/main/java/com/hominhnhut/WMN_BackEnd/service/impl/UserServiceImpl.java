@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
 
     MyMapperInterFace<UserDtoRequest, User, UserDtoResponse> userMapper;
 
-    @PostAuthorize("hasRole('ADMIN')")
+//    @PostAuthorize("hasRole('ADMIN')")
     public List<UserDtoResponse> getAll() {
         log.info("In method Get All");
         var securityContext = SecurityContextHolder.getContext().getAuthentication();

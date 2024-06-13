@@ -13,7 +13,6 @@ import java.util.Set;
 @Builder
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class AuthenticationResponse {
-
     String token;
     String fullName;
     Set<String> roleNames;

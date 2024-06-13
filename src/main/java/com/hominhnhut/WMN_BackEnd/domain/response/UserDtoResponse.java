@@ -20,7 +20,7 @@ public class UserDtoResponse {
 
     String userName;
 
-//    String password;
+    String password;
 
     String fullName;
 
