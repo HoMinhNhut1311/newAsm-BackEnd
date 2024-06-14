@@ -26,9 +26,10 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
-    private final String[]  PUBLIC_POST_URL = {"/login","/introspect"};
+    private final String[]  PUBLIC_POST_URL = {"/login","/introspect","/google"};
 
     @Value("${asm.key}")
     private String SIGN_KEY;
@@ -37,8 +38,8 @@ public class SecurityConfig {
 
         // Permit All
         httpSecurity.authorizeHttpRequests(request ->
-//                request.requestMatchers(HttpMethod.POST,PUBLIC_POST_URL).permitAll()
-               request.anyRequest().permitAll()
+                request.requestMatchers(HttpMethod.POST,PUBLIC_POST_URL).permitAll()
+                        .requestMatchers("/***").hasRole("ADMIN").anyRequest().authenticated()
                         );
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(

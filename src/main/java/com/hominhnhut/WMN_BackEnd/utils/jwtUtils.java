@@ -47,11 +47,9 @@ public class jwtUtils {
                 )
                 .claim("scope",generateScope(user.getRoles()))
                 .claim("userId",(user.getUserId()))
-                .claim("password",(user.getPassword()))
                 .issueTime(new Date())
                 .issuer("HoMinhNhut.com")
                 .build();
-
         // Payload
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
 

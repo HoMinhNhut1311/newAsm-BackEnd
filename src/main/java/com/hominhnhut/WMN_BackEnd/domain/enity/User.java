@@ -34,4 +34,5 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "roleId"))
     Set<Role> roles;
 
+
 }

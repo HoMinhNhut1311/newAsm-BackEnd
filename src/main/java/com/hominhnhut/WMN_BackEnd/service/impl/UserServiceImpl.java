@@ -12,6 +12,7 @@ import com.hominhnhut.WMN_BackEnd.mapper.impl.UserMapper;
 import com.hominhnhut.WMN_BackEnd.repository.RoleRepository;
 import com.hominhnhut.WMN_BackEnd.repository.UserRepository;
 import com.hominhnhut.WMN_BackEnd.service.Interface.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -39,6 +41,8 @@ public class UserServiceImpl implements UserService {
     RoleRepository roleRepository;
 
     MyMapperInterFace<UserDtoRequest, User, UserDtoResponse> userMapper;
+
+    PasswordEncoder passwordEncoder;
 
 //    @PostAuthorize("hasRole('ADMIN')")
     public List<UserDtoResponse> getAll() {
@@ -141,6 +145,27 @@ public class UserServiceImpl implements UserService {
                 () -> new AppException(errorType.userNameNotExist)
         );
         return null;
+    }
+
+    @Override
+    public UserDtoResponse getMyInfo() {
+        var context = SecurityContextHolder.getContext().getAuthentication();
+        User response = userRepository.findUSerByUsername(context.getName()).orElseThrow();
+        return userMapper.mapToResponese(response);
+    }
+
+    @Override
+    public UserDtoResponse changeMyPassword(String username, String pwOld, String pwNew) {
+        User user = userRepository.findUSerByUsername(username).orElseThrow(
+                () -> new AppException(errorType.NotFoundUsername)
+        );
+        boolean isPw = passwordEncoder.matches(pwOld,user.getPassword());
+        if (!isPw) {
+                throw new AppException(errorType.PasswordIsNotCorrect);
+        }
+        user.setPassword(passwordEncoder.encode(pwNew));
+        log.info("Đổi mk thành công");
+        return userMapper.mapToResponese(userRepository.save(user));
     }
 
 

@@ -2,6 +2,7 @@ package com.hominhnhut.WMN_BackEnd.service.Interface;
 
 import com.hominhnhut.WMN_BackEnd.domain.request.UserDtoRequest;
 import com.hominhnhut.WMN_BackEnd.domain.response.UserDtoResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 import java.util.List;
@@ -24,4 +25,8 @@ public interface UserService {
     Set<UserDtoResponse> getUserByUsernameContaining(String usernameContain);
 
     UserDtoResponse getUserByUsername(String username);
+
+    UserDtoResponse getMyInfo();
+
+    UserDtoResponse changeMyPassword(String username,String pwOld, String pwNew);
 }

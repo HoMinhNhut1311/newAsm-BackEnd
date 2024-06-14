@@ -23,12 +23,11 @@ public enum errorType {
     PasswordIsNotCorrect(1008, "Mật khẩu không chính xác",HttpStatus.UNAUTHORIZED),
     IsNotMyToken(1009, "Token không phải của chúng tôi",HttpStatus.BAD_REQUEST),
     ProductIdNotFound(1010, "Product Id khong ton tai",HttpStatus.BAD_REQUEST),
-    ImageIsNull(1011,"Image khong ton tai",HttpStatus.BAD_REQUEST)
-
+    NotFoundUsername(1011, "Username không tồn tại",HttpStatus.NOT_FOUND),
 
     ;
 
-    int code;
-    String message;
-    HttpStatus httpStatus;
+    final int code;
+    final String message;
+    final HttpStatus httpStatus;
 }

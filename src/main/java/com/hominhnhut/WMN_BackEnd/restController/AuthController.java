@@ -12,10 +12,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
@@ -41,5 +40,12 @@ public class AuthController {
            @RequestBody IntrospectRequest request) throws ParseException, JOSEException {
         boolean isValid = authService.Introspect(request);
         return ResponseEntity.ok(isValid);
+    }
+
+    @PostMapping("/google")
+    public ResponseEntity<?> LoginWithGoogle(
+            @RequestHeader(value = "Authoration") String token
+    ) {
+        return ResponseEntity.ok(token);
     }
 }

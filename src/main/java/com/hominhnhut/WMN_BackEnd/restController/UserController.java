@@ -1,10 +1,12 @@
 package com.hominhnhut.WMN_BackEnd.restController;
 
+import com.hominhnhut.WMN_BackEnd.domain.request.ChangePasswordRequest;
 import com.hominhnhut.WMN_BackEnd.domain.request.UserDtoRequest;
 import com.hominhnhut.WMN_BackEnd.domain.response.UserDtoResponse;
 import com.hominhnhut.WMN_BackEnd.service.Interface.PageService;
 import com.hominhnhut.WMN_BackEnd.service.Interface.UserService;
 import com.hominhnhut.WMN_BackEnd.service.impl.PageServiceImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
@@ -14,7 +16,9 @@ import org.springframework.http.ResponseEntity;
 //import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,6 +63,21 @@ public class UserController {
 
         Set<UserDtoResponse> userDtoResponses = this.userService.getUserByRoleId(roleName);
         return ResponseEntity.ok(userDtoResponses);
+    }
+
+    @GetMapping("/myinfo")
+    public ResponseEntity<UserDtoResponse> getMyInfo() {
+        UserDtoResponse response = userService.getMyInfo();
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/changeMyPass")
+    public ResponseEntity<UserDtoResponse> changeMyPass(
+            @AuthenticationPrincipal Jwt jwt, @RequestBody ChangePasswordRequest changePasswordRequest
+            ) {
+        UserDtoResponse response = userService.changeMyPassword(jwt.getClaimAsString("sub"),
+                changePasswordRequest.getPwOld(), changePasswordRequest.getPwNew());
+                return ResponseEntity.ok(response);
     }
 
     @PostMapping("/")
