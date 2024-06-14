@@ -18,7 +18,7 @@ public class CartRequest {
     LocalDate localDate;
     boolean status;
     String username;
-    Set<String> productIds;
+    List<String> productIds;
 
     @Override
     public String toString() {

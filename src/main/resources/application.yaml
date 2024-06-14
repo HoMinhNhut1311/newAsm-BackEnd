@@ -5,39 +5,37 @@
 #dpg-cov8cfnsc6pc73epmb4g-a.oregon-postgres.render.com/ -host
 #ho_minh_nhut - name database
 
-spring:
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-  datasource:
-    username: minhnhut
-    password: 1
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/mydb
-  application:
-    name: HoMinhNhut
-  servlet:
-    multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
-
-  
-
-
 #spring:
-#  datasource:
-#    url: jdbc:sqlserver://localhost:1435;databaseName=mydb
-#    username: sa
-#    password: Thuynga@1508
-#    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
 #  jpa:
+#    show-sql: true
 #    hibernate:
 #      ddl-auto: update
-#    show-sql: true
-#    properties:
-#      hibernate:
-#        dialect: org.hibernate.dialect.SQLServerDialect
+#  datasource:
+#    username: minhnhut
+#    password: 1
+#    driver-class-name: org.postgresql.Driver
+#    url: jdbc:postgresql://localhost:5432/mydb
+#  application:
+#    name: HoMinhNhut
+#  servlet:
+#    multipart:
+#      max-file-size: 100MB
+#      max-request-size: 100MB
+
+
+spring:
+  datasource:
+    url: jdbc:sqlserver://localhost:1435;databaseName=mydb
+    username: sa
+    password: Thuynga@1508
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.SQLServerDialect
 
 server:
   port: 1311
