@@ -14,7 +14,6 @@ import java.util.Set;
 @Entity
 @Table(name = "users")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Builder
 public class User {
 
     @Id
@@ -34,6 +33,5 @@ public class User {
             joinColumns = @JoinColumn(name = "userId"),
             inverseJoinColumns = @JoinColumn(name = "roleId"))
     Set<Role> roles;
-
 
 }

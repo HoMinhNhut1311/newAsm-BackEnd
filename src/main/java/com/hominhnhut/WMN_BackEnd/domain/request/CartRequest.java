@@ -18,15 +18,5 @@ public class CartRequest {
     LocalDate localDate;
     boolean status;
     String username;
-    Set<String> productIds;
-
-    @Override
-    public String toString() {
-        return "CartRequest{" +
-                "localDateTime=" + localDate +
-                ", status=" + status +
-                ", username='" + username + '\'' +
-                ", productIds=" + productIds +
-                '}';
-    }
+    List<String> productIds;
 }
