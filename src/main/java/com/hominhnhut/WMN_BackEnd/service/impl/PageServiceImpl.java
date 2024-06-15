@@ -1,16 +1,20 @@
 package com.hominhnhut.WMN_BackEnd.service.impl;
 
-import com.hominhnhut.WMN_BackEnd.domain.enity.*;
-import com.hominhnhut.WMN_BackEnd.domain.request.CartRequest;
+import com.hominhnhut.WMN_BackEnd.domain.enity.Category;
+import com.hominhnhut.WMN_BackEnd.domain.enity.Product;
+import com.hominhnhut.WMN_BackEnd.domain.enity.Role;
+import com.hominhnhut.WMN_BackEnd.domain.enity.User;
 import com.hominhnhut.WMN_BackEnd.domain.request.ProductRequest;
 import com.hominhnhut.WMN_BackEnd.domain.request.UserDtoRequest;
-import com.hominhnhut.WMN_BackEnd.domain.response.CartResponse;
 import com.hominhnhut.WMN_BackEnd.domain.response.ProductResponse;
 import com.hominhnhut.WMN_BackEnd.domain.response.UserDtoResponse;
 import com.hominhnhut.WMN_BackEnd.exception.errorType;
 import com.hominhnhut.WMN_BackEnd.exception.myException.AppException;
 import com.hominhnhut.WMN_BackEnd.mapper.MyMapperInterFace;
-import com.hominhnhut.WMN_BackEnd.repository.*;
+import com.hominhnhut.WMN_BackEnd.repository.CategoryRepository;
+import com.hominhnhut.WMN_BackEnd.repository.ProductRepository;
+import com.hominhnhut.WMN_BackEnd.repository.RoleRepository;
+import com.hominhnhut.WMN_BackEnd.repository.UserRepository;
 import com.hominhnhut.WMN_BackEnd.service.Interface.PageService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +32,10 @@ public class PageServiceImpl implements PageService {
     RoleRepository roleRepository;
     ProductRepository productRepository;
     CategoryRepository categoryRepository;
-    CartRepository cartRespository;
+
 
     MyMapperInterFace<ProductRequest, Product, ProductResponse> productMapper;
     MyMapperInterFace<UserDtoRequest, User, UserDtoResponse> userMapper;
-    MyMapperInterFace<CartRequest, Cart, CartResponse> cartMapper;
 
 
     // Lấy ra User theo Role
@@ -54,20 +57,12 @@ public class PageServiceImpl implements PageService {
         PageRequest request = PageRequest.of(pageNumber, pageSize);
         if (categoryId.equals("0")) {
             return productRepository.findAll(request).map(productMapper::mapToResponese);
-        } else {
+        }
+        else {
             Category category = categoryRepository.findById(categoryId).
                     orElseThrow(() -> new AppException(errorType.notFound));
             return null;
         }
-    }
-
-    @Override
-    public Page<CartResponse> getPageCartByUserId(Integer pageNumber, Integer pageSize, String userId) {
-        PageRequest request = PageRequest.of(pageNumber, pageSize);
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new AppException(errorType.notFound)
-        );
-        return cartRespository.getAllByUser(userId, request).map(cartMapper::mapToResponese);
     }
 
 

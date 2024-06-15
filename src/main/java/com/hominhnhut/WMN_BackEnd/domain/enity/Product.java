@@ -28,21 +28,11 @@ public class Product {
     private MediaFile image;
 
     @ManyToOne
-    @JoinColumn(name = "categoryId")
+    @JoinColumn(name = "categorId")
     private Category category;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<CartProduct> cartProducts = new HashSet<>();
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "productId='" + productId + '\'' +
-                ", productName='" + productName + '\'' +
-                ", productPrice=" + productPrice +
-                ", productDes='" + productDes + '\'' +
-                ", image=" + image +
-                ", category=" + category +
-                '}';
-    }
+    @ManyToMany(mappedBy = "products")
+    private Set<Cart> carts = new HashSet<>();
+
 }

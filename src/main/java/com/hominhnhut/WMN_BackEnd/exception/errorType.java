@@ -24,7 +24,7 @@ public enum errorType {
     IsNotMyToken(1009, "Token không phải của chúng tôi",HttpStatus.BAD_REQUEST),
     ProductIdNotFound(1010, "Product Id khong ton tai",HttpStatus.BAD_REQUEST),
     NotFoundUsername(1011, "Username không tồn tại",HttpStatus.NOT_FOUND),
-    notFoundProductName(1012,"san pham khong toan tai",HttpStatus.NOT_FOUND),
+
     ;
 
     final int code;

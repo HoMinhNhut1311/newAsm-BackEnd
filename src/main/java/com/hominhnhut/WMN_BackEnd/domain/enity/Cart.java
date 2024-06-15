@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,17 +28,11 @@ public class Cart {
     @JoinColumn(name = "userId")
     private User user;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<CartProduct> cartProducts = new HashSet<>();
-
-    @Override
-    public String toString() {
-        return "Cart{" +
-                "cartId='" + cartId + '\'' +
-                ", localDate=" + localDate +
-                ", status=" + status +
-                ", user=" + user +
-                ", cartProducts=" + cartProducts +
-                '}';
-    }
+    @ManyToMany
+    @JoinTable(
+            name = "cart_product",
+            joinColumns = @JoinColumn(name = "cartId"),
+            inverseJoinColumns = @JoinColumn(name = "productId")
+    )
+    private Set<Product> products = new HashSet<>();
 }
