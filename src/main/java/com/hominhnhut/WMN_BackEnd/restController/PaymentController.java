@@ -1,22 +1,28 @@
 package com.hominhnhut.WMN_BackEnd.restController;
 
 import com.hominhnhut.WMN_BackEnd.config.PaymentConfig;
+import com.hominhnhut.WMN_BackEnd.domain.enity.Cart;
+import com.hominhnhut.WMN_BackEnd.domain.request.CartRequest;
+import com.hominhnhut.WMN_BackEnd.domain.response.CartResponse;
 import com.hominhnhut.WMN_BackEnd.domain.response.PaymentResponse;
+import com.hominhnhut.WMN_BackEnd.domain.response.ProductResponse;
+import com.hominhnhut.WMN_BackEnd.service.Interface.CartService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "http://localhost:5173/")
 @RestController
@@ -25,16 +31,23 @@ import java.util.*;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 public class PaymentController {
-
+    CartService cartService;
+    static String cartId = "";
 
     @GetMapping("/createPayment")
-    public ResponseEntity<PaymentResponse> createPayment() throws UnsupportedEncodingException {
+    public ResponseEntity<PaymentResponse> createPayment(
+            @RequestParam("amount") Long amount,
+            @RequestParam("cartId") String id
+    ) throws UnsupportedEncodingException {
         String orderType = "other";
+        cartId = id;
+        log.info("cartId: {}", cartId);
 //        long amount = Integer.parseInt(req.getParameter("amount")) * 100;
 //        String bankCode = req.getParameter("bankCode");
 
         String vnp_TxnRef = PaymentConfig.getRandomNumber(8);
-//        String vnp_IpAddr = PaymentConfig.getIpAddress(req);
+        double v = .1;
+        String vnp_IpAddr = "192.168.1.6";
 
         String vnp_TmnCode = PaymentConfig.vnp_TmnCode;
 
@@ -42,17 +55,17 @@ public class PaymentController {
         vnp_Params.put("vnp_Version", PaymentConfig.vnp_Version);
         vnp_Params.put("vnp_Command", PaymentConfig.vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(100000 * 100));
+        vnp_Params.put("vnp_Amount", String.valueOf(amount * 100L));
         vnp_Params.put("vnp_CurrCode", "VND");
 
         vnp_Params.put("vnp_BankCode", "NCB");
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + vnp_TxnRef);
-//        vnp_Params.put("vnp_OrderType", orderType);
+        vnp_Params.put("vnp_OrderType", orderType);
 
         vnp_Params.put("vnp_Locale", "vn");
-//        vnp_Params.put("vnp_ReturnUrl", PaymentConfig.vnp_ReturnUrl);
-//        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+        vnp_Params.put("vnp_ReturnUrl", PaymentConfig.vnp_ReturnUrl);
+        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
 
         Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -90,6 +103,7 @@ public class PaymentController {
         String vnp_SecureHash = PaymentConfig.hmacSHA512(PaymentConfig.secretKey, hashData.toString());
         queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
         String paymentUrl = PaymentConfig.vnp_PayUrl + "?" + queryUrl;
+
 //        com.google.gson.JsonObject job = new JsonObject();
 //        job.addProperty("code", "00");
 //        job.addProperty("message", "success");
@@ -102,5 +116,45 @@ public class PaymentController {
         paymentResponse.setMessage("Successfully");
         paymentResponse.setURL(paymentUrl);
         return ResponseEntity.ok(paymentResponse);
+    }
+
+    @GetMapping("/return")
+    public ResponseEntity<Void> returnPage(@RequestParam Map<String, String> requestParams) {
+        PaymentResponse paymentResponse = new PaymentResponse();
+        log.info("payment response: {}", requestParams);
+        List<String> fieldNames = new ArrayList<>(requestParams.keySet());
+        Collections.sort(fieldNames);
+        StringBuilder hashData = new StringBuilder();
+        for (String fieldName : fieldNames) {
+            String fieldValue = requestParams.get(fieldName);
+            if (fieldValue != null && fieldValue.length() > 0) {
+                hashData.append(fieldName).append('=').append(fieldValue);
+                if (fieldNames.indexOf(fieldName) < fieldNames.size() - 1) {
+                    hashData.append('&');
+                }
+            }
+        }
+        if ("00".equals(requestParams.get("vnp_ResponseCode")) && "00".equals(requestParams.get("vnp_TransactionStatus"))) {
+            CartResponse cartResponse = cartService.findCartById(cartId);
+            CartRequest cartRequest = new CartRequest();
+            cartRequest.setLocalDate(cartResponse.getLocalDate());
+            cartRequest.setUsername(cartResponse.getUsername());
+            List<String> productIds = cartResponse.getProducts().stream(
+            ).map(ProductResponse::getProductId).collect(Collectors.toList()
+            );
+            productIds.forEach(sv->{
+                log.info("product id : {}",sv);
+            });
+            cartRequest.setProductIds(productIds);
+            cartRequest.setStatus(true);
+            cartService.updateCart(cartRequest, cartId);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setLocation(URI.create("http://localhost:5173/user/success"));
+            return new ResponseEntity<>(headers, HttpStatus.SEE_OTHER);
+        } else {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setLocation(URI.create("http://localhost:5173/user/failure"));
+            return new ResponseEntity<>(headers, HttpStatus.SEE_OTHER);
+        }
     }
 }
