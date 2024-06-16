@@ -46,7 +46,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST,PUBLIC_POST_URL).permitAll()
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/**","/email/**").permitAll()
                         .requestMatchers("/***").hasRole("ADMIN").anyRequest().authenticated()
                         );
         httpSecurity.oauth2ResourceServer(oauth2 ->

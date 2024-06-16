@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 //import com.hominhnhut.WMN_BackEnd.scheduled.testScheduled;
 
 @SpringBootApplication
+@EnableScheduling
 public class FinalProjectApplication {
 
 	public static void main(String[] args) {

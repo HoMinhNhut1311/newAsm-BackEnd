@@ -60,11 +60,11 @@ public class MediaFileServiceImpl implements MediaFileService {
         MediaFile mediaFile = new MediaFile();
         mediaFile.setMediaFileID(result.get("public_id").toString());
         mediaFile.setMediaFilePath(result.get("url").toString());
-        mediaFile.setMediaFileName(file.getOriginalFilename());
+        mediaFile.setMediaFileName(userProfile.getProfileId() + "-IMG");
         mediaFile.setMediaFileType(result.get("resource_type").toString());
         mediaFile.setCreateAt(new Date());
 
-        this.mediaFileRepository.saveAndFlush(mediaFile);
+        this.mediaFileRepository.save(mediaFile);
 
         userProfile.setMediaFile(mediaFile);
         System.out.println("đã them6" + userProfile.getMediaFile());

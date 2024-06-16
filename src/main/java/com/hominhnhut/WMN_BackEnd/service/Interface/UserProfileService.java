@@ -1,6 +1,7 @@
 package com.hominhnhut.WMN_BackEnd.service.Interface;
 
 
+import com.hominhnhut.WMN_BackEnd.domain.enity.UserProfile;
 import com.hominhnhut.WMN_BackEnd.domain.request.UserProfileDtoRequest;
 import com.hominhnhut.WMN_BackEnd.domain.response.UserDtoResponse;
 
@@ -17,5 +18,7 @@ public interface UserProfileService {
     UserDtoResponse update(String idUpdate, UserProfileDtoRequest request);
 
     void delete(String idDelete);
+
+    UserProfile getUserProfileByEmail(String email);
 }
 

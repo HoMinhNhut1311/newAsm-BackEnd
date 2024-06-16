@@ -47,8 +47,8 @@ public class UserProfileServiceImpl implements UserProfileService {
         User user = new User();
         user.setUserId(request.getUserId());
         userProfile.setUser(user);
-        return this.profileMapper.
-                mapToResponese(this.profileRepository.save(userProfile));
+        return profileMapper.
+                mapToResponese(profileRepository.save(userProfile));
     }
 
     public UserDtoResponse update(String idUpdate,UserProfileDtoRequest request) {
@@ -59,17 +59,22 @@ public class UserProfileServiceImpl implements UserProfileService {
             updateProfile.setProfileId(idUpdate);
             updateProfile.setMediaFile(profile.getMediaFile());
             return this.profileMapper.
-                mapToResponese(this.profileRepository.save(updateProfile));
+                mapToResponese(profileRepository.save(updateProfile));
     }
 
     public void delete(String idDelete) {
         UserProfile profile = this.profileRepository.findById(idDelete).orElseThrow(
                 () -> new AppException(errorType.notFound)
         );
-        this.profileRepository.delete(profile);
+       profileRepository.delete(profile);
     }
 
-
+    @Override
+    public UserProfile getUserProfileByEmail(String email) {
+        return profileRepository.getUserProfileByProfileEmail(email).orElseThrow(
+                () -> new AppException(errorType.EmailNotFound)
+        );
+    }
 
 
 }

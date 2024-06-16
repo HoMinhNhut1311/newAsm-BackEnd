@@ -168,5 +168,15 @@ public class UserServiceImpl implements UserService {
         return userMapper.mapToResponese(userRepository.save(user));
     }
 
+    @Override
+    public UserDtoResponse resetPassword(String username, String pwNew) {
+        User user = userRepository.findUSerByUsername(username).orElseThrow(
+                () -> new AppException(errorType.NotFoundUsername)
+        );
+        user.setPassword(passwordEncoder.encode(pwNew));
+        log.info("Reset Mật khẩu thành công");
+        return userMapper.mapToResponese(userRepository.save(user));
+    }
+
 
 }

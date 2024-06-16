@@ -30,4 +30,5 @@ public interface UserRepository extends JpaRepository<User, String> {
             "WHERE ur.role_id = :roleId",nativeQuery = true)
     Page<User> getUsersByRoleId(@Param("roleId") Integer roleId, Pageable pageable);
 
+
 }

@@ -29,4 +29,7 @@ public interface UserService {
     UserDtoResponse getMyInfo();
 
     UserDtoResponse changeMyPassword(String username,String pwOld, String pwNew);
+
+    UserDtoResponse resetPassword(String username,String pwNew);
+
 }

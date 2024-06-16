@@ -1,5 +1,6 @@
 package com.hominhnhut.WMN_BackEnd.exception;
 
+import com.google.api.client.auth.oauth2.TokenResponseException;
 import com.hominhnhut.WMN_BackEnd.domain.response.ApiResponse;
 import com.hominhnhut.WMN_BackEnd.exception.myException.AppException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -28,6 +29,12 @@ public class GlobalException {
         response.setCode(errorType.getCode());
 
         return ResponseEntity.status(errorType.getHttpStatus()).body(response);
+    }
+
+    @ExceptionHandler(TokenResponseException.class)
+    public ResponseEntity<String> response(TokenResponseException exception) {
+        String error = exception.getMessage();
+        return ResponseEntity.badRequest().body(error);
     }
 
 

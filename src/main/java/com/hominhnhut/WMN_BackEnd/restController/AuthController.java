@@ -9,10 +9,13 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.hominhnhut.WMN_BackEnd.domain.request.AuthenticationRequest;
+import com.hominhnhut.WMN_BackEnd.domain.request.ChangePasswordRequest;
 import com.hominhnhut.WMN_BackEnd.domain.request.IntrospectRequest;
 import com.hominhnhut.WMN_BackEnd.domain.request.UserGoogleInfo;
 import com.hominhnhut.WMN_BackEnd.domain.response.AuthenticationResponse;
+import com.hominhnhut.WMN_BackEnd.domain.response.UserDtoResponse;
 import com.hominhnhut.WMN_BackEnd.service.Interface.AuthService;
+import com.hominhnhut.WMN_BackEnd.service.Interface.UserService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,8 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -36,23 +41,13 @@ import java.util.Collections;
 public class AuthController {
 
     AuthService authService;
-    @NonFinal
-    @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-id}")
-    String clientId;
+    UserService userService;
 
-    @NonFinal
-    @Value("${spring.security.oauth2.resourceserver.opaquetoken.client-secret}")
-    String clientSecret;
 
-    WebClient webClient;
 
     @GetMapping("/auth/url")
     public ResponseEntity<String> getGoogleAuthorizationUrl() {
-        String url =  new GoogleAuthorizationCodeRequestUrl(
-                clientId,
-                "http://localhost:5173/login",
-                Arrays.asList("email","profile","openid")
-        ).build();
+        String url  = authService.getUserToUrlOauth2();
         return ResponseEntity.ok(url);
     }
 
@@ -60,22 +55,7 @@ public class AuthController {
     public ResponseEntity<AuthenticationResponse> callback(
             @RequestParam("code") String code
     ) throws IOException {
-        String token  = new GoogleAuthorizationCodeTokenRequest(
-                new NetHttpTransport(),
-                new GsonFactory(),
-                clientId,
-                clientSecret,
-                code,
-                "http://localhost:5173/login"
-        ).execute().getAccessToken();
-
-            UserGoogleInfo userInfor = webClient.get().
-              uri(uriBuilder -> uriBuilder.path("/oauth2/v3/userinfo").
-                        queryParam("access_token",token).build()).retrieve()
-                .bodyToMono(UserGoogleInfo.class).block();
-
-        AuthenticationResponse response = authService.LoginOauth2(userInfor);
-
+        AuthenticationResponse response = authService.LoginOauth2(code);
         return ResponseEntity.ok(response);
     }
 
@@ -96,11 +76,12 @@ public class AuthController {
         return ResponseEntity.ok(isValid);
     }
 
-    @PostMapping("/google")
-    public ResponseEntity<?> LoginWithGoogle(
-            @RequestBody IntrospectRequest request
+    @PostMapping("/resetPassword")
+    public ResponseEntity<UserDtoResponse> changeMyPass(
+            @AuthenticationPrincipal Jwt jwt, @RequestBody ChangePasswordRequest changePasswordRequest
     ) {
-        System.out.println(request.getToken());
-        return ResponseEntity.ok(request.getToken());
+        UserDtoResponse response = userService.resetPassword(jwt.getClaimAsString("sub"),
+                changePasswordRequest.getPwNew());
+        return ResponseEntity.ok(response);
     }
 }

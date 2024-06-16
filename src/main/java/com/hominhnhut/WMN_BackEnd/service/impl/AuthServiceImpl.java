@@ -1,4 +1,8 @@
 package com.hominhnhut.WMN_BackEnd.service.impl;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.hominhnhut.WMN_BackEnd.domain.enity.Role;
 import com.hominhnhut.WMN_BackEnd.domain.enity.User;
 import com.hominhnhut.WMN_BackEnd.domain.enity.UserProfile;
@@ -13,20 +17,25 @@ import com.hominhnhut.WMN_BackEnd.mapper.impl.UserMapper;
 import com.hominhnhut.WMN_BackEnd.repository.RoleRepository;
 import com.hominhnhut.WMN_BackEnd.repository.UserRepository;
 import com.hominhnhut.WMN_BackEnd.service.Interface.AuthService;
+import com.hominhnhut.WMN_BackEnd.service.Interface.MyGmailService;
+import com.hominhnhut.WMN_BackEnd.utils.RanDomUtils;
 import com.hominhnhut.WMN_BackEnd.utils.jwtUtils;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.SignedJWT;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
+import java.io.IOException;
 import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ExecutorService;
 
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
@@ -39,6 +48,20 @@ public class AuthServiceImpl implements AuthService {
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
     jwtUtils jwtUtils;
+    WebClient webClient;
+    MyGmailService myGmailService;
+
+    ExecutorService executorService;
+    RanDomUtils ranDomUtils;
+
+
+    @NonFinal
+    @Value("${security.oauth2.resourceserver.opaquetoken.client-id}")
+    String clientId;
+
+    @NonFinal
+    @Value("${security.oauth2.resourceserver.opaquetoken.client-secret}")
+    String clientSecret;
 
 
 
@@ -60,7 +83,44 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AuthenticationResponse LoginOauth2(UserGoogleInfo userGoogleInfo) {
+    public String getUserToUrlOauth2() {
+        String url =  new GoogleAuthorizationCodeRequestUrl(
+                clientId,
+                "http://localhost:5173/login",
+                Arrays.asList("email","profile","openid")
+        ).build();
+        return url;
+    }
+
+    @Override
+    public AuthenticationResponse LoginOauth2(String  code) throws IOException {
+
+        String accessToken  = new GoogleAuthorizationCodeTokenRequest(
+                new NetHttpTransport(),
+                new GsonFactory(),
+                clientId,
+                clientSecret,
+                code,
+                "http://localhost:5173/login"
+        ).execute().getAccessToken();
+
+        try {
+            UserGoogleInfo userGoogleInfo = webClient.get().
+                    uri(uriBuilder -> uriBuilder.path("/oauth2/v3/userinfo").
+                            queryParam("access_token",accessToken).build()).retrieve()
+                    .bodyToMono(UserGoogleInfo.class).block();
+            assert userGoogleInfo != null;
+            return getUserOauth2(userGoogleInfo);
+        } catch (Exception e) {
+            log.info("Invalid Graint");
+            return null;
+        }
+    }
+
+
+
+    private AuthenticationResponse getUserOauth2(UserGoogleInfo userGoogleInfo) {
+        // Sau khi lấy dđược Thông tin GoogleInfor
         Optional<User> user = userRepository.findUSerByUsername(userGoogleInfo.email());
         if (user.isPresent()) {
             UserDtoResponse response = userMapper.mapToResponese(user.get());
@@ -73,12 +133,19 @@ public class AuthServiceImpl implements AuthService {
         }
         // Nếu UserOauth2 Chưa tồn tại -> tạo User với username = Email, password = 1
         else {
+            String randomPassword = ranDomUtils.generateRandomNumber(5);
+            executorService.execute(() ->  {
+                   myGmailService.sendEmail(userGoogleInfo.email(),
+                           "Username : "+ userGoogleInfo.email() +
+                                   "\nMật khẩu mặc định của bạn :"+randomPassword
+                           , "NH-Application - Chào mừng bạn gia nhập");
+            });
             Role role = roleRepository.getRoleByRoleName("USER");
             Set<Role> roles = new HashSet<>();
             roles.add(role);
             User userOauth2 = User.builder()
                     .username(userGoogleInfo.email())
-                    .password(passwordEncoder.encode("1"))
+                    .password(passwordEncoder.encode(randomPassword))
                     .roles(roles)
                     .build();
             UserProfile userProfile = new UserProfile();
@@ -94,10 +161,12 @@ public class AuthServiceImpl implements AuthService {
                     .token(token)
                     .fullName(userGoogleInfo.name())
                     .roleNames(response.getRoleNames())
+                    .firstOauth2(true)
                     .build();
         }
 
     }
+
 
     public boolean Introspect(IntrospectRequest request) throws ParseException, JOSEException {
         SignedJWT signedJWT = SignedJWT.parse(request.getToken());
