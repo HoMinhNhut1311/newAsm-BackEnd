@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface UserProfileRepository extends JpaRepository<UserProfile,String> {
 
     Optional<UserProfile> getUserProfileByProfileEmail(String email);
+    boolean existsByProfileEmail(String email);
 }

@@ -42,7 +42,7 @@ public class AuthController {
 
     AuthService authService;
     UserService userService;
-
+    MailService mailService;
 
 
     @GetMapping("/auth/url")
@@ -68,7 +68,18 @@ public class AuthController {
         AuthenticationResponse response = authService.Login(request);
         return ResponseEntity.ok(response);
     }
-
+    @PostMapping("/register")
+    public ResponseEntity<UserDtoResponse> Register(
+            @RequestBody RegisterRequest registerRequest
+    ) throws MessagingException {
+        MailRequest request = new MailRequest(registerRequest.getEmail(),"Mật khẩu của bạn","acdb");
+        mailService.send(request);
+        UserDtoResponse response = authService.register(registerRequest);
+        if (response == null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        }
+        return ResponseEntity.ok(response);
+    }
     @PostMapping("/introspect")
     public ResponseEntity<Boolean> Introspect(
            @RequestBody IntrospectRequest request) throws ParseException, JOSEException {

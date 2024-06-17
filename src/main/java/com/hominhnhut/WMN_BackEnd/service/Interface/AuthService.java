@@ -20,5 +20,6 @@ public interface AuthService {
     AuthenticationResponse LoginOauth2(String code) throws IOException;
 
     boolean Introspect(IntrospectRequest request) throws ParseException, JOSEException;
+    UserDtoResponse register(RegisterRequest registerRequest);
 
 }

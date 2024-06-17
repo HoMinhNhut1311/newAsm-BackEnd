@@ -29,6 +29,7 @@ public interface UserRepository extends JpaRepository<User, String> {
             "INNER JOIN users_roles ur ON u.user_id = ur.user_id\n" +
             "WHERE ur.role_id = :roleId",nativeQuery = true)
     Page<User> getUsersByRoleId(@Param("roleId") Integer roleId, Pageable pageable);
+    boolean existsByUsername(String username);
 
 
 }
