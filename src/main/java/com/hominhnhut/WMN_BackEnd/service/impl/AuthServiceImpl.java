@@ -9,6 +9,7 @@ import com.hominhnhut.WMN_BackEnd.domain.enity.User;
 import com.hominhnhut.WMN_BackEnd.domain.enity.UserProfile;
 import com.hominhnhut.WMN_BackEnd.domain.request.AuthenticationRequest;
 import com.hominhnhut.WMN_BackEnd.domain.request.IntrospectRequest;
+import com.hominhnhut.WMN_BackEnd.domain.request.RegisterRequest;
 import com.hominhnhut.WMN_BackEnd.domain.request.UserGoogleInfo;
 import com.hominhnhut.WMN_BackEnd.domain.response.AuthenticationResponse;
 import com.hominhnhut.WMN_BackEnd.domain.response.UserDtoResponse;

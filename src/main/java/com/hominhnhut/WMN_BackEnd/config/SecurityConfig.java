@@ -47,7 +47,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST,PUBLIC_POST_URL).permitAll()
                         .requestMatchers("/auth/**","/email/**").permitAll()
-                        .requestMatchers("/***").hasRole("ADMIN").anyRequest().authenticated()
+                        .requestMatchers("/**").permitAll()
                         );
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(

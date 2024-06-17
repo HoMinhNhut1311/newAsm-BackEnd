@@ -57,7 +57,7 @@ public class PageServiceImpl implements PageService {
         } else {
             Category category = categoryRepository.findById(categoryId).
                     orElseThrow(() -> new AppException(errorType.notFound));
-            return null;
+            return productRepository.getProductByCategoryId(categoryId,request).map(productMapper::mapToResponese);
         }
     }
 
