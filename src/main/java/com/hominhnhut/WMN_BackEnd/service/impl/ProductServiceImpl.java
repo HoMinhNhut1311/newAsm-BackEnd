@@ -1,5 +1,6 @@
 package com.hominhnhut.WMN_BackEnd.service.impl;
 
+import com.hominhnhut.WMN_BackEnd.domain.enity.CartProduct;
 import com.hominhnhut.WMN_BackEnd.domain.enity.Category;
 import com.hominhnhut.WMN_BackEnd.domain.enity.Product;
 import com.hominhnhut.WMN_BackEnd.domain.request.ProductRequest;
@@ -95,12 +96,7 @@ public class ProductServiceImpl implements ProductService {
         );
     }
 
-    @Override
-    public Set<ProductResponse> getProductSoldByLocalDate(LocalDate localDate) {
-        return new HashSet<>(
-                productRepository.getProductSoldByLocalDate(localDate).stream().map(productMapper::mapToResponese).toList()
-        );
-    }
+
 
 
 }

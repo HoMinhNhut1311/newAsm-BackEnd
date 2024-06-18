@@ -1,5 +1,6 @@
 package com.hominhnhut.WMN_BackEnd.repository;
 
+import com.hominhnhut.WMN_BackEnd.domain.enity.CartProduct;
 import com.hominhnhut.WMN_BackEnd.domain.enity.Product;
 import com.hominhnhut.WMN_BackEnd.domain.enity.User;
 import org.springframework.data.domain.Page;
@@ -29,13 +30,7 @@ public interface ProductRepository extends JpaRepository<Product, String> {
             "LIMIT 1", nativeQuery = true)
     Product getProductBestSeller();
 
-    @Query(value = "SELECT p.* " +
-            "FROM cart " +
-            "INNER JOIN cart_product cp ON cart.cart_id = cp.cart_id " +
-            "INNER JOIN product p ON p.product_id = cp.product_id " +
-            "WHERE cart.local_date = :localDate",
-            nativeQuery = true)
-    Set<Product> getProductSoldByLocalDate(@Param("localDate") LocalDate localDate);
+
 
 
 }

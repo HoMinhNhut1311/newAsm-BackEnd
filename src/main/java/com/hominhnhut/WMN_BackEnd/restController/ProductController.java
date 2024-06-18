@@ -1,5 +1,6 @@
 package com.hominhnhut.WMN_BackEnd.restController;
 
+import com.hominhnhut.WMN_BackEnd.domain.enity.CartProduct;
 import com.hominhnhut.WMN_BackEnd.domain.request.ProductRequest;
 import com.hominhnhut.WMN_BackEnd.domain.response.ProductResponse;
 import com.hominhnhut.WMN_BackEnd.service.Interface.PageService;
@@ -39,14 +40,7 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/sold")
-    public ResponseEntity<
-            Set<ProductResponse>> getProductSoldByLocalDate(
-            @RequestParam("localDate")LocalDate localDate
-            ) {
-        Set<ProductResponse> responses = productService.getProductSoldByLocalDate(localDate);
-        return ResponseEntity.ok(responses);
-    }
+
 
 
     @GetMapping("/{id}")

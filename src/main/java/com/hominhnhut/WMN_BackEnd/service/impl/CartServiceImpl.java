@@ -61,15 +61,26 @@ public class CartServiceImpl implements CartService {
 
         Set<CartProduct> cartProducts = new HashSet<>();
         for (String productId : cartRequest.getProductIds()) {
+            boolean isExistProduct = false;
             Product product = productRepository.getProductByProductId(productId);
             if (product == null) {
                 throw new AppException(errorType.notFoundProductName);
             }
-            CartProduct cartProduct = new CartProduct();
-            cartProduct.setCart(cart);
-            cartProduct.setProduct(product);
-            cartProduct.setQuantity(cartProduct.getQuantity() + 1); // Tăng số lượng
-            cartProducts.add(cartProduct);
+            for(CartProduct cartProduct : cartProducts) {
+                if (cartProduct.getProduct().getProductId().equals(productId)) {
+                    cartProduct.setQuantity(cartProduct.getQuantity() + 1);
+                    isExistProduct = true;
+                }
+            }
+
+            if (!isExistProduct) {
+                CartProduct cartProduct = new CartProduct();
+                cartProduct.setCart(cart);
+                cartProduct.setProduct(product);
+                cartProduct.setQuantity(cartProduct.getQuantity());
+                cartProducts.add(cartProduct);
+            }
+
         }
 
         cart.setCartProducts(cartProducts);

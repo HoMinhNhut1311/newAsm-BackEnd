@@ -1,5 +1,6 @@
 package com.hominhnhut.WMN_BackEnd.domain.enity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,6 +33,7 @@ public class Product {
     private Category category;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonBackReference
     private Set<CartProduct> cartProducts = new HashSet<>();
 
     @Override
