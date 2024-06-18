@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -72,6 +73,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public ProductResponse getProductBestSeller() {
+        Product product = productRepository.getProductBestSeller();
+        return productMapper.mapToResponese(product);
+    }
+
+    @Override
     public ProductResponse findProductById(String productId) {
         Product product = productRepository.findById(productId).orElseThrow(
                 () -> new AppException(errorType.notFound)
@@ -85,6 +92,13 @@ public class ProductServiceImpl implements ProductService {
         return new HashSet<>(
                 this.productRepository.findAllByProductNameContaining(productName,pageable).stream()
                         .map(this.productMapper::mapToResponese).toList()
+        );
+    }
+
+    @Override
+    public Set<ProductResponse> getProductSoldByLocalDate(LocalDate localDate) {
+        return new HashSet<>(
+                productRepository.getProductSoldByLocalDate(localDate).stream().map(productMapper::mapToResponese).toList()
         );
     }
 

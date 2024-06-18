@@ -5,6 +5,7 @@ import com.hominhnhut.WMN_BackEnd.domain.response.ProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Service
@@ -18,7 +19,11 @@ public interface ProductService {
 
     Set<ProductResponse> findAll();
 
+    ProductResponse getProductBestSeller();
+
     ProductResponse findProductById(String productId);
 
     Set<ProductResponse> getProductByProductNameContaining(String productName);
+
+    Set<ProductResponse> getProductSoldByLocalDate(LocalDate localDate);
 }

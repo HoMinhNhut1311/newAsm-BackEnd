@@ -67,6 +67,11 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserDtoResponse save(UserDtoRequest request) {
+        boolean existed = userRepository.existsByUsername(request.getUsername());
+        if (existed) {
+            throw new AppException(errorType.UsernameExisted);
+        }
+
         User user = this.userMapper.mapFromRequest(request);
         UserProfile userProfile = new UserProfile();
         userProfile.setUser(user);

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @CrossOrigin(origins = "http://localhost:5173/")
@@ -31,6 +32,22 @@ public class ProductController {
         Set<ProductResponse> responses = productService.findAll();
         return ResponseEntity.ok(responses);
     }
+
+    @GetMapping("/bestSeller")
+    public ResponseEntity<ProductResponse> getProductBestSeller() {
+        ProductResponse response = productService.getProductBestSeller();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/sold")
+    public ResponseEntity<
+            Set<ProductResponse>> getProductSoldByLocalDate(
+            @RequestParam("localDate")LocalDate localDate
+            ) {
+        Set<ProductResponse> responses = productService.getProductSoldByLocalDate(localDate);
+        return ResponseEntity.ok(responses);
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> findProductById(
