@@ -1,6 +1,5 @@
 package com.hominhnhut.WMN_BackEnd.repository;
 
-import com.hominhnhut.WMN_BackEnd.domain.enity.CartProduct;
 import com.hominhnhut.WMN_BackEnd.domain.enity.Product;
 import com.hominhnhut.WMN_BackEnd.domain.enity.User;
 import org.springframework.data.domain.Page;
@@ -17,20 +16,16 @@ public interface ProductRepository extends JpaRepository<Product, String> {
     Page<Product> findAllByProductNameContaining(String usernameContain, Pageable pageable);
 
     Product getProductByProductId(String s);
+    Product getProductByProductName(String name);
     @Query(value = "SELECT p FROM Product p " +
             "INNER JOIN p.category c ON p.category.categoryId = c.categoryId \n" +
             "WHERE c.categoryId = :categoryId")
     Page<Product> getProductByCategoryId(@Param("categoryId") String categoryId, Pageable pageable);
 
-    @Query(value = "SELECT p.* FROM cart_product cp " +
-            "INNER JOIN cart c ON c.cart_id = cp.cart_id " +
-            "INNER JOIN product p ON p.product_id = cp.product_id " +
-            "GROUP BY p.product_id " +
-            "ORDER BY COUNT(cp.product_id) DESC " +
-            "LIMIT 1", nativeQuery = true)
+    @Query(value = "SELECT TOP 1 p.* FROM cart_product cp \n" +
+            "            INNER JOIN cart c ON c.cart_id = cp.cart_id \n" +
+            "            INNER JOIN product p ON p.product_id = cp.product_id \n" +
+            "            GROUP BY p.product_id ,p.product_des,p.product_name,p.product_price,p.category_id,p.image_media_fileid,p.stock\n" +
+            "            ORDER BY COUNT(cp.product_id) DESC ", nativeQuery = true)
     Product getProductBestSeller();
-
-
-
-
 }

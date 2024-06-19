@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,16 +34,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PaymentController {
     CartService cartService;
-    static String cartId = "";
+    static CartRequest cart;
 
     @GetMapping("/createPayment")
     public ResponseEntity<PaymentResponse> createPayment(
             @RequestParam("amount") Long amount,
-            @RequestParam("cartId") String id
+            @RequestParam("localDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate localDate,
+            @RequestParam("status") Boolean status,
+            @RequestParam("username") String username,
+            @RequestParam("productIds") List<String> productIds
     ) throws UnsupportedEncodingException {
+        if (cart == null) {
+            cart = new CartRequest();
+        }
         String orderType = "other";
-        cartId = id;
-        log.info("cartId: {}", cartId);
+        cart.setLocalDate(localDate);
+        cart.setStatus(status);
+        cart.setUsername(username);
+        cart.setProductIds(productIds);
+        log.info("cartId: {}", cart.toString());
 //        long amount = Integer.parseInt(req.getParameter("amount")) * 100;
 //        String bankCode = req.getParameter("bankCode");
 
@@ -135,19 +146,8 @@ public class PaymentController {
             }
         }
         if ("00".equals(requestParams.get("vnp_ResponseCode")) && "00".equals(requestParams.get("vnp_TransactionStatus"))) {
-            CartResponse cartResponse = cartService.findCartById(cartId);
-            CartRequest cartRequest = new CartRequest();
-            cartRequest.setLocalDate(cartResponse.getLocalDate());
-            cartRequest.setUsername(cartResponse.getUsername());
-            List<String> productIds = cartResponse.getProducts().stream(
-            ).map(ProductResponse::getProductId).collect(Collectors.toList()
-            );
-            productIds.forEach(sv->{
-                log.info("product id : {}",sv);
-            });
-            cartRequest.setProductIds(productIds);
-            cartRequest.setStatus(true);
-            cartService.updateCart(cartRequest, cartId);
+            CartRequest cartRequest = cart;
+            cartService.saveCart(cartRequest);
             HttpHeaders headers = new HttpHeaders();
             headers.setLocation(URI.create("http://localhost:5173/user/success"));
             return new ResponseEntity<>(headers, HttpStatus.SEE_OTHER);
