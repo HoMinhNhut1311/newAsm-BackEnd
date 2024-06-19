@@ -13,6 +13,7 @@ public class ProductResponse {
     private String productId;
     private double productPrice;
     private String productDes;
+    private int stock;
     private String categoryName;
     private String mediaFilePath;
 

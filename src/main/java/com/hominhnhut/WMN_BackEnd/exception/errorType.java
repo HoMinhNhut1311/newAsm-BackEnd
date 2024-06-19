@@ -25,6 +25,7 @@ public enum errorType {
     ProductIdNotFound(1010, "Product Id khong ton tai",HttpStatus.BAD_REQUEST),
     NotFoundUsername(1011, "Username không tồn tại",HttpStatus.NOT_FOUND),
     notFoundProductName(1012,"san pham khong toan tai",HttpStatus.NOT_FOUND),
+    ProductNameIsExist(1015,"Tên sản phẩm đã tồn tại",HttpStatus.BAD_REQUEST),
     EmailNotFound(1013, "Email khong ton tai",HttpStatus.NOT_FOUND),
     UsernameExisted(1014, "Username đã tồn tai",HttpStatus.BAD_REQUEST)
     ;

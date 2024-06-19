@@ -30,14 +30,4 @@ public class Cart {
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<CartProduct> cartProducts = new HashSet<>();
 
-    @Override
-    public String toString() {
-        return "Cart{" +
-                "cartId='" + cartId + '\'' +
-                ", localDate=" + localDate +
-                ", status=" + status +
-                ", user=" + user +
-                ", cartProducts=" + cartProducts +
-                '}';
-    }
 }

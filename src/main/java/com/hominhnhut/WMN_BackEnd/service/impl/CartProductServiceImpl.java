@@ -1,6 +1,6 @@
 package com.hominhnhut.WMN_BackEnd.service.impl;
 
-import com.hominhnhut.WMN_BackEnd.domain.enity.CartProduct;
+import com.hominhnhut.WMN_BackEnd.domain.response.RevenueResponse;
 import com.hominhnhut.WMN_BackEnd.repository.CartProductRepository;
 import com.hominhnhut.WMN_BackEnd.service.Interface.CartProductService;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class CartProductServiceImpl implements CartProductService {
     }
 
     @Override
-    public Set<CartProduct> StatisticalByLocalDate(LocalDate localDate) {
+    public Set<RevenueResponse> StatisticalByLocalDate(LocalDate localDate) {
         return cartProductRepository.getProductSoldByLocalDate(localDate);
     }
 }

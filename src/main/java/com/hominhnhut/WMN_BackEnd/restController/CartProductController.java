@@ -1,6 +1,7 @@
 package com.hominhnhut.WMN_BackEnd.restController;
 
 import com.hominhnhut.WMN_BackEnd.domain.enity.CartProduct;
+import com.hominhnhut.WMN_BackEnd.domain.response.RevenueResponse;
 import com.hominhnhut.WMN_BackEnd.service.Interface.CartProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,10 +23,10 @@ public class CartProductController {
     }
 
     @GetMapping("/statistical")
-    public ResponseEntity<Set<CartProduct>> StatisticalByLocalDate(
+    public ResponseEntity<Set<RevenueResponse>> StatisticalByLocalDate(
             @RequestParam LocalDate localDate
-            ) {
-        Set<CartProduct> cartProducts = cartProductService.StatisticalByLocalDate(localDate);
+    ) {
+        Set<RevenueResponse> cartProducts = cartProductService.StatisticalByLocalDate(localDate);
         return ResponseEntity.ok(cartProducts);
     }
 }

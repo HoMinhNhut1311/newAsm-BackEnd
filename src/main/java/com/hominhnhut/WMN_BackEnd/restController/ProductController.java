@@ -1,6 +1,5 @@
 package com.hominhnhut.WMN_BackEnd.restController;
 
-import com.hominhnhut.WMN_BackEnd.domain.enity.CartProduct;
 import com.hominhnhut.WMN_BackEnd.domain.request.ProductRequest;
 import com.hominhnhut.WMN_BackEnd.domain.response.ProductResponse;
 import com.hominhnhut.WMN_BackEnd.service.Interface.PageService;
@@ -33,16 +32,11 @@ public class ProductController {
         Set<ProductResponse> responses = productService.findAll();
         return ResponseEntity.ok(responses);
     }
-
     @GetMapping("/bestSeller")
     public ResponseEntity<ProductResponse> getProductBestSeller() {
         ProductResponse response = productService.getProductBestSeller();
         return ResponseEntity.ok(response);
     }
-
-
-
-
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> findProductById(
             @PathVariable("id") String productId

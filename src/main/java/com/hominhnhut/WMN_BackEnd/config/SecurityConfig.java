@@ -33,11 +33,30 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final String[]  PUBLIC_POST_URL = {"/login"
-            ,"/introspect","/google"};
+            ,"/introspect","logout",};
+
+    private final String[] PRIVATE_GET_USER = {
+            "/user/myinfo","/user/changeMyPass","/user/page",
+            "/mediaFile/profile/",
+            "/category",
+            "/product","/product/productName/S","/product/bestSeller","/product/sold",
+            "/payment/createPayment","/payment/return?",
+            "/cart","/cart/",
+            "/cartProduct/statistical"
+    };
+
+    private final String[] PRIVATE_PUT_USER = {
+            "/profile"
+    };
+
+    private final String[] PRIVATE_POST_USER = {
+            "/user/changeMyPass",
+            "/mediaFile/profile/",
+            "cart"
+    };
 
     @Value("${asm.key}")
     private String SIGN_KEY;
@@ -47,8 +66,12 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST,PUBLIC_POST_URL).permitAll()
                         .requestMatchers("/auth/**","/email/**").permitAll()
-                        .requestMatchers("/**").permitAll()
-                        );
+                        .requestMatchers("/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET,PRIVATE_GET_USER).hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, PRIVATE_POST_USER).hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, PRIVATE_PUT_USER).hasRole("USER")
+                        .anyRequest().authenticated()
+        );
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(
                         jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
@@ -63,13 +86,13 @@ public class SecurityConfig {
         return httpSecurity.build();
     }
 
-        @Bean
-        JwtDecoder jwtDecoder() {
+    @Bean
+    JwtDecoder jwtDecoder() {
         SecretKey secretKey = new SecretKeySpec(SIGN_KEY.getBytes(),"HS256");
-            return NimbusJwtDecoder
-                    .withSecretKey(secretKey)
-                    .macAlgorithm(MacAlgorithm.HS256)
-                    .build();
+        return NimbusJwtDecoder
+                .withSecretKey(secretKey)
+                .macAlgorithm(MacAlgorithm.HS256)
+                .build();
     }
 
     @Bean

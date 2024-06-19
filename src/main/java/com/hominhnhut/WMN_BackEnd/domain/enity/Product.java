@@ -24,7 +24,8 @@ public class Product {
     private double productPrice;
 
     private String productDes;
-
+    @Column(nullable = true)
+    private int stock =1;
     @OneToOne
     private MediaFile image;
 
@@ -36,15 +37,5 @@ public class Product {
     @JsonBackReference
     private Set<CartProduct> cartProducts = new HashSet<>();
 
-    @Override
-    public String toString() {
-        return "Product{" +
-                "productId='" + productId + '\'' +
-                ", productName='" + productName + '\'' +
-                ", productPrice=" + productPrice +
-                ", productDes='" + productDes + '\'' +
-                ", image=" + image +
-                ", category=" + category +
-                '}';
-    }
+
 }

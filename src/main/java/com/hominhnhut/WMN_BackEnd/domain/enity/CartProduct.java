@@ -13,7 +13,6 @@ import lombok.*;
 @Entity
 @Table(name = "cart_product")
 public class CartProduct {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

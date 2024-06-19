@@ -1,6 +1,5 @@
 package com.hominhnhut.WMN_BackEnd.service.impl;
 
-import com.hominhnhut.WMN_BackEnd.domain.enity.CartProduct;
 import com.hominhnhut.WMN_BackEnd.domain.enity.Category;
 import com.hominhnhut.WMN_BackEnd.domain.enity.Product;
 import com.hominhnhut.WMN_BackEnd.domain.request.ProductRequest;
@@ -25,8 +24,9 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 @Service
-@FieldDefaults(makeFinal = true,level = AccessLevel.PRIVATE)
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @RequiredArgsConstructor
 @Slf4j
 public class ProductServiceImpl implements ProductService {
@@ -38,14 +38,21 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse saveProduct(ProductRequest productRequest) {
-        Category category = categoryRepository.findById(productRequest.
-                getCategoryId()).orElseThrow(
-                () -> new AppException(errorType.CategoryIdIsNotExist)
-        );
+        Category category = categoryRepository.findById(productRequest.getCategoryId())
+                .orElseThrow(() -> new AppException(errorType.CategoryIdIsNotExist));
+
+        Product existingProduct = productRepository.getProductByProductName(productRequest.getProductName());
+        if (existingProduct != null) {
+            throw new AppException(errorType.ProductNameIsExist);
+        }
+
         Product product = productMapper.mapFromRequest(productRequest);
-        return productMapper.mapToResponese
-                (productRepository.save(product));
+        product.setCategory(category);
+        Product savedProduct = productRepository.save(product);
+
+        return productMapper.mapToResponese(savedProduct);
     }
+
 
     @Override
     public void deleteProduct(String productId) {
@@ -60,6 +67,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = productRepository.findById(productId).orElseThrow(
                 () -> new AppException(errorType.notFound)
         );
+
         Product productUpdate = productMapper.mapFromRequest(productRequest);
         productUpdate.setCategory(product.getCategory());
         productUpdate.setImage(product.getImage());
@@ -74,12 +82,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductResponse getProductBestSeller() {
-        Product product = productRepository.getProductBestSeller();
-        return productMapper.mapToResponese(product);
-    }
-
-    @Override
     public ProductResponse findProductById(String productId) {
         Product product = productRepository.findById(productId).orElseThrow(
                 () -> new AppException(errorType.notFound)
@@ -91,12 +93,16 @@ public class ProductServiceImpl implements ProductService {
     public Set<ProductResponse> getProductByProductNameContaining(String productName) {
         Pageable pageable = PageRequest.of(0, 5);
         return new HashSet<>(
-                this.productRepository.findAllByProductNameContaining(productName,pageable).stream()
+                this.productRepository.findAllByProductNameContaining(productName, pageable).stream()
                         .map(this.productMapper::mapToResponese).toList()
         );
     }
 
-
+    @Override
+    public ProductResponse getProductBestSeller() {
+        Product product = productRepository.getProductBestSeller();
+        return productMapper.mapToResponese(product);
+    }
 
 
 }

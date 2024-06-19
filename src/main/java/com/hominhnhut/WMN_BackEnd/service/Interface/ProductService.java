@@ -1,6 +1,5 @@
 package com.hominhnhut.WMN_BackEnd.service.Interface;
 
-import com.hominhnhut.WMN_BackEnd.domain.enity.CartProduct;
 import com.hominhnhut.WMN_BackEnd.domain.request.ProductRequest;
 import com.hominhnhut.WMN_BackEnd.domain.response.ProductResponse;
 import org.springframework.data.domain.Page;
@@ -13,6 +12,7 @@ import java.util.Set;
 public interface ProductService {
 
     ProductResponse saveProduct(ProductRequest productRequest);
+    ProductResponse getProductBestSeller();
 
     void deleteProduct(String productId);
 
@@ -20,10 +20,7 @@ public interface ProductService {
 
     Set<ProductResponse> findAll();
 
-    ProductResponse getProductBestSeller();
-
     ProductResponse findProductById(String productId);
 
     Set<ProductResponse> getProductByProductNameContaining(String productName);
-
 }
